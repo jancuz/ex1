@@ -62,6 +62,31 @@ namespace ex1
                 Sort(ref Ox, lf, j);
         }
 
+        // сортировка методом Хоара координат х с одновременной перестановкой координат у
+        public static void SortXY(int[] Ox, int[] SOx, int lf, int rg)
+        {
+            int i = lf, j = rg, x = Ox[(lf + rg) / 2];
+            do
+            {
+                while (x > Ox[i]) i++;
+                while (Ox[j] > x) j--;
+                if (i <= j)
+                {
+                    if (i < j)
+                    {
+                        Swap(ref Ox[i], ref Ox[j]);
+                        Swap(ref SOx[i], ref SOx[j]);
+                    }
+                    i++;
+                    j--;
+                }
+            } while (i <= j);
+            if (lf < j)
+                SortXY(Ox, SOx, lf, j);
+            if (i < rg)
+                SortXY(Ox, SOx, i, rg);
+        }
+
         static void Main(string[] args)
         {
 
