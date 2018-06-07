@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ex1
 {
@@ -41,6 +38,28 @@ namespace ex1
                 Ox[i * 2] = PrM[0][i].X;
                 Ox[i * 2 + 1] = PrM[1][i].X;
             }
+        }
+
+        // сортировка методом Хоара координат x
+        public static void Sort(ref int[] Ox, int lf, int rg)
+        {
+            int i = lf, j = rg, x = Ox[(lf + rg) / 2];
+            do
+            {
+                while (x > Ox[i]) i++;
+                while (Ox[j] > x) j--;
+                if (i <= j)
+                {
+                    if (i < j)
+                        Swap(ref Ox[i], ref Ox[j]);
+                    i++;
+                    j--;
+                }
+            } while (i <= j);
+            if (i < rg)
+                Sort(ref Ox, i, rg);
+            if (lf < j)
+                Sort(ref Ox, lf, j);
         }
 
         static void Main(string[] args)
