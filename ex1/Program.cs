@@ -1,6 +1,5 @@
 ﻿using System;
 
-
 namespace ex1
 {
     class Program
@@ -62,7 +61,7 @@ namespace ex1
                 Sort(ref Ox, lf, j);
         }
 
-        // сортировка методом Хоара координат х с одновременной перестановкой координат у
+        // сортировка методом Хоара координат a с одновременной перестановкой координат b
         public static void SortXY(int[] Ox, int[] SOx, int lf, int rg)
         {
             int i = lf, j = rg, x = Ox[(lf + rg) / 2];
@@ -87,9 +86,76 @@ namespace ex1
                 SortXY(Ox, SOx, i, rg);
         }
 
+        // определение площади заданной фигуры
+        public static int Solve()
+        {
+            Sort(ref Ox, 0, N * 2 - 1);     // сортировка координат x по возрастанию
+            int m = 0;                      // длина сечения
+            int res = 0;                    // площадь
+
+            //прибавление площади рассматриваемого сечения
+            for (int i = 0; i < N * 2; i++)
+            {
+                if (i != 0) res = res + Math.Abs((Ox[i] - Ox[i - 1]) * m);
+                if ((i == 0) || Ox[i] != Ox[i - 1])
+                    Change(Ox[i], ref m);   //определение нового значения длины сечения
+            }
+            return res;
+        }
+
+        // пересечение прямоугольников
+        public static bool Peres(int k, int x)
+        {
+            if (PrM[0][k].X <= x && PrM[1][k].X > x) return true;
+            else return false;
+        }
+
+        // изменение длины сечения для соответствующей координаты
+        public static void Change(int x, ref int res)
+        {
+            int m = 0;
+            for (int i = 0; i < N; i++)
+                if (Peres(i, x))                // если есть пересечение
+                {
+                    // формирование массива ординат для данной координаты х
+                    Oy[m] = PrM[0][i].Y;
+                    Oy[m + 1] = PrM[1][i].Y;
+                    // определение признака начала или конца отрезка
+                    FOy[m] = 1; FOy[m + 1] = -1;
+                    m += 2;
+                }
+            if (m == 0) res = 0;
+            else
+            {
+                SortXY(Oy, FOy, 0, m - 1);          // сортировка Oy с перестановкой FOy
+                res = Math.Abs(Calc(Oy, FOy, m));   // новая длина сечения
+            }
+        }
+
+        // определение новой длины сечения
+        public static int Calc(int[] Ox, int[] SOx, int N)
+        {
+            int sc = 0;                 // сечение
+            int priznak = 0;            // значение признака
+            if (SOx[0] > 0) priznak++;
+            for (int i = 1; i < N; i++)
+            {
+                if (priznak > 0) sc = sc + Ox[i] - Ox[i - 1];
+                priznak += SOx[i];
+            }
+            return sc;
+        }
+
+        // результат выполнения программы
+        public static void Done(int square)
+        {
+            FileInOut.ToFile("output", square.ToString());
+        }
+
         static void Main(string[] args)
         {
-
+            Init();
+            Done(Solve());
         }
     }
 }
