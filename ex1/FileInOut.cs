@@ -34,9 +34,7 @@ namespace ex1
         public static void ToFile(string name, string obj)
         {
             var f = new StreamWriter(name + ".txt");
-            var strings = obj.Split('\n', '\r');
-            foreach (var t in strings)
-                f.WriteLine(t);
+            f.WriteLine(obj);
             f.Close();
         }
     }

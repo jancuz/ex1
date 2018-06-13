@@ -10,7 +10,6 @@ namespace ex1
         public static int[] Ox = new int[MaxN * 2];     // Координаты x
         public static int[] Oy = new int[MaxN * 2];     // Координаты y
         public static int[] FOy = new int[MaxN * 2];    // Признак начала и конца отрезка
-        public static int[] SOx = new int[MaxN * 2];    // Отсортированные координаты x
 
         // перестановка
         public static void Swap(ref int a, ref int b)
@@ -24,8 +23,8 @@ namespace ex1
         {
             var input = new FileInOut("input");   // считыватель из файла
             N = Int32.Parse(input.Next());        // количество прямоугольников
-            PrM[0] = new Point[100];              // первая вершина прямоугольника (меньшая)
-            PrM[1] = new Point[100];              // вторая вершина прямоугольника (большая)
+            PrM[0] = new Point[MaxN];              // первая вершина прямоугольника (меньшая)
+            PrM[1] = new Point[MaxN];              // вторая вершина прямоугольника (большая)
             for (int i = 0; i < N; i++)
             {
                 PrM[0][i] = new Point(Int32.Parse(input.Next()), Int32.Parse(input.Next()));
@@ -62,28 +61,28 @@ namespace ex1
         }
 
         // сортировка методом Хоара координат a с одновременной перестановкой координат b
-        public static void SortXY(int[] Ox, int[] SOx, int lf, int rg)
+        public static void SortAB(int[] Oa, int[] Ob, int lf, int rg)
         {
-            int i = lf, j = rg, x = Ox[(lf + rg) / 2];
+            int i = lf, j = rg, x = Oa[(lf + rg) / 2];
             do
             {
-                while (x > Ox[i]) i++;
-                while (Ox[j] > x) j--;
+                while (x > Oa[i]) i++;
+                while (Oa[j] > x) j--;
                 if (i <= j)
                 {
                     if (i < j)
                     {
-                        Swap(ref Ox[i], ref Ox[j]);
-                        Swap(ref SOx[i], ref SOx[j]);
+                        Swap(ref Oa[i], ref Oa[j]);
+                        Swap(ref Ob[i], ref Ob[j]);
                     }
                     i++;
                     j--;
                 }
             } while (i <= j);
             if (lf < j)
-                SortXY(Ox, SOx, lf, j);
+                SortAB(Oa, Ob, lf, j);
             if (i < rg)
-                SortXY(Ox, SOx, i, rg);
+                SortAB(Oa, Ob, i, rg);
         }
 
         // определение площади заданной фигуры
@@ -127,18 +126,18 @@ namespace ex1
             if (m == 0) res = 0;
             else
             {
-                SortXY(Oy, FOy, 0, m - 1);          // сортировка Oy с перестановкой FOy
+                SortAB(Oy, FOy, 0, m - 1);          // сортировка Oy с перестановкой FOy
                 res = Math.Abs(Calc(Oy, FOy, m));   // новая длина сечения
             }
         }
 
         // определение новой длины сечения
-        public static int Calc(int[] Ox, int[] SOx, int N)
+        public static int Calc(int[] Ox, int[] SOx, int n)
         {
             int sc = 0;                 // сечение
             int priznak = 0;            // значение признака
             if (SOx[0] > 0) priznak++;
-            for (int i = 1; i < N; i++)
+            for (int i = 1; i < n; i++)
             {
                 if (priznak > 0) sc = sc + Ox[i] - Ox[i - 1];
                 priznak += SOx[i];
